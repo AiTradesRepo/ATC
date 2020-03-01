@@ -1,0 +1,8 @@
+[[CURRENCIES]]
+code="ATC"
+issuer="ISSUER_PUBLIC_KEY"
+display_decimals=7
+name="AiTrades Coin"
+desc="Aitrades Coin (ATC) is a utility coin designed and developed on Stellar BlockChain that aims to empower the Artificial Intelligence crypto-trading ecosystems."
+conditions=""
+image="https://aitrades.ai/.well-known/LogoATC.png"
