@@ -1,9 +1,11 @@
 const _ = require("lodash");
 const moment = require("moment");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const DistributionHistory = require("./DistributionHistory");
 
-const walletSnapshotSchema = Schema({
+const walletSnapshotSchema = new Schema({
   publicKey: {
     type: String,
     required: true
@@ -44,6 +46,6 @@ const walletSnapshotSchema = Schema({
   }
 });
 
-const WalletSnapshot = new Model("WalletSnapshot", walletSnapshotSchema);
+const WalletSnapshot = mongoose.model("WalletSnapshot", walletSnapshotSchema);
 
 module.exports = WalletSnapshot;

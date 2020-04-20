@@ -6,9 +6,13 @@ const _ = require("lodash");
 const moment = require("moment");
 const Web3 = require("web3");
 const axios = require("axios");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const web3Http = new Web3(
-  new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/SECRET_KEY")
+  new Web3.providers.HttpProvider(
+    `https://mainnet.infura.io/v3/${process.env.INFURA_SECRET_KEY}`
+  )
 );
 
 const orderSchema = new Schema(
@@ -177,7 +181,7 @@ orderSchema.methods.checkETHPaymentTransaction = async function() {
       }
       try {
         const eth_getBalanceResponse = await axios.post(
-          "https://mainnet.infura.io/v3/SECRET_KEY",
+          `https://mainnet.infura.io/v3/${process.env.INFURA_SECRET_KEY}`,
           {
             jsonrpc: "2.0",
             method: "eth_getBalance",
@@ -205,7 +209,7 @@ orderSchema.methods.checkETHPaymentTransaction = async function() {
 
           axios
             .get(
-              `http://api.etherscan.io/api?module=account&action=txlist&address=${order.walletAddress}&startblock=0&endblock=99999999&sort=asc&apikey=API_KEY`
+              `http://api.etherscan.io/api?module=account&action=txlist&address=${order.walletAddress}&startblock=0&endblock=99999999&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`
             )
             .then(response => {
               if (response.data.result) {
@@ -291,7 +295,7 @@ orderSchema.methods.checkUSDTPaymentTransaction = async function() {
 
             axios
               .get(
-                `http://api.etherscan.io/api?module=account&action=tokentx&address=${order.walletAddress}&contractaddress=${process.env.USDT_CONTRACT_ADDRESS}&startblock=0&endblock=99999999&sort=asc&apikey=API_KEY`
+                `http://api.etherscan.io/api?module=account&action=tokentx&address=${order.walletAddress}&contractaddress=${process.env.USDT_CONTRACT_ADDRESS}&startblock=0&endblock=99999999&sort=asc&apikey=${env.process.ETHERSCAN_API_KEY}`
               )
               .then(response => {
                 if (response.data.result) {
@@ -343,7 +347,7 @@ orderSchema.methods.checkETHConfirmations = async function() {
       if (order.status === "waiting_for_confirmation") {
         axios
           .get(
-            `http://api.etherscan.io/api?module=account&action=txlist&address=${order.walletAddress}&startblock=0&endblock=99999999&sort=asc&apikey=API_KEY`
+            `http://api.etherscan.io/api?module=account&action=txlist&address=${order.walletAddress}&startblock=0&endblock=99999999&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`
           )
           .then(response => {
             if (response.data.result) {
@@ -393,7 +397,7 @@ orderSchema.methods.checkUSDTConfirmations = async function() {
       if (order.status === "waiting_for_confirmation") {
         axios
           .get(
-            `http://api.etherscan.io/api?module=account&action=tokentx&address=${order.walletAddress}&contractaddress=${process.env.USDT_CONTRACT_ADDRESS}&startblock=0&endblock=99999999&sort=asc&apikey=API_KEY`
+            `http://api.etherscan.io/api?module=account&action=tokentx&address=${order.walletAddress}&contractaddress=${process.env.USDT_CONTRACT_ADDRESS}&startblock=0&endblock=99999999&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`
           )
           .then(response => {
             if (response.data.result) {
@@ -512,6 +516,6 @@ orderSchema.methods.transferAsset = async function() {
   }
 };
 
-const Order = new Model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
 
 module.exports = Order;

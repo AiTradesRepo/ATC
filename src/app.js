@@ -30,10 +30,6 @@ app.use(atcRouter);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", async (req, res) => {
-  res.redirect("https://aitrades.com");
-});
-
 app.listen(port, async () => {
   console.log(`Server running on port ${port}`);
 
@@ -45,62 +41,53 @@ app.listen(port, async () => {
     }
   );
 
-  const endOfMonth = moment.utc().endOf("month");
-  const startOfMonth = moment.utc().startOf("month");
-  const daysInMonth = moment.utc().daysInMonth();
-
-  Wallet.find({ type: "staking" }).then(wallets => {
-    wallets.forEach(async wallet => {
-      // console.log(wallet.publicKey);
-      if (wallet.userId !== "40") {
-        WalletSnapshot.find({
-          userId: wallet.userId,
-          createdAt: {
-            $gte: startOfMonth.toDate(),
-            $lt: endOfMonth.toDate()
-          }
-        }).then(async snapshots => {
-          let hasLessThan100 = false;
-          let total = 0;
-          for (let i = 0; i < snapshots.length; i++) {
-            if (snapshots[i].balance < 100) {
-              hasLessThan100 = true;
-            }
-            total += snapshots[i].balance;
-          }
-          const average = total / daysInMonth;
-
-          let monthProfitPercentage = hasLessThan100
-            ? 0
-            : calculateMonthProfit();
-          let profit =
-            Math.round(((average * monthProfitPercentage) / 100) * 100) / 100;
-
-          console.log(
-            "PROFIT",
-            wallet.userId,
-            average,
-            monthProfitPercentage,
-            profit
-          );
-          const distributionHistory = new DistributionHistory({
-            publicKey: wallet.publicKey,
-            asset: wallet.asset,
-            serverUrl: wallet.serverUrl,
-            userId: wallet.userId,
-            monthProfitPercentage,
-            profitAmount: profit,
-            fromDate: startOfMonth.isAfter(wallet.createdAt)
-              ? startOfMonth.toDate()
-              : wallet.createdAt,
-            toDate: endOfMonth
-          });
-
-          await distributionHistory.save();
-        });
-      }
-    });
-  });
+  // const endOfMonth = moment.utc().endOf("month");
+  // const startOfMonth = moment.utc().startOf("month");
+  // const daysInMonth = moment.utc().daysInMonth();
+  //
+  // Wallet.find({ type: "staking" }).then(wallets => {
+  //   wallets.forEach(async wallet => {
+  //     WalletSnapshot.find({
+  //       userId: wallet.userId,
+  //       createdAt: {
+  //         $gte: startOfMonth.toDate(),
+  //         $lt: endOfMonth.toDate()
+  //       }
+  //     }).then(async snapshots => {
+  //       let hasLessThan100 = false;
+  //       let total = 0;
+  //       for (let i = 0; i < snapshots.length; i++) {
+  //         if (snapshots[i].balance < 100) {
+  //           hasLessThan100 = true;
+  //         }
+  //         total += snapshots[i].balance;
+  //       }
+  //       const average = total / daysInMonth;
+  //
+  //       let monthProfitPercentage = hasLessThan100
+  //         ? 0
+  //         : wallet.calculateMonthProfit();
+  //       let profit =
+  //         Math.round(((average * monthProfitPercentage) / 100) * 100) / 100;
+  //
+  //       console.log("PROFIT", average, monthProfitPercentage, profit);
+  //       const distributionHistory = new DistributionHistory({
+  //         publicKey: wallet.publicKey,
+  //         asset: wallet.asset,
+  //         serverUrl: wallet.serverUrl,
+  //         userId: wallet.userId,
+  //         monthProfitPercentage,
+  //         profitAmount: profit,
+  //         fromDate: startOfMonth.isAfter(wallet.createdAt)
+  //           ? startOfMonth.toDate()
+  //           : wallet.createdAt,
+  //         toDate: endOfMonth
+  //       });
+  //
+  //       await distributionHistory.save();
+  //     });
+  //   });
+  // });
 
   const blockchainConn = new WebSocket("wss://ws.blockchain.info/inv");
   blockchainConn.onopen = () => {

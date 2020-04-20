@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const apiUserSchema = new Schema(
   {
@@ -77,6 +79,6 @@ apiUserSchema.statics.findByCredentials = async (username, password) => {
   return apiUser;
 };
 
-const ApiUser = new Model("ApiUser", apiUserSchema);
+const ApiUser = mongoose.model("ApiUser", apiUserSchema);
 
 module.exports = ApiUser;

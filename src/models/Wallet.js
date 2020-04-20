@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const StellarSdk = require("stellar-sdk");
 const StellarServer = new StellarSdk.Server(process.env.STELLAR_SERVER_URL);
 const WalletSnapshot = require("./WalletSnapshot");
@@ -166,6 +168,10 @@ walletSchema.methods.takeSnapshot = async function(currentDateTime) {
   }
 };
 
-const Wallet = new Model("Wallet", walletSchema);
+walletSchema.methods.calculateMonthProfit = function() {
+  return 1;
+};
+
+const Wallet = mongoose.model("Wallet", walletSchema);
 
 module.exports = Wallet;

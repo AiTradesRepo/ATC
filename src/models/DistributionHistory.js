@@ -1,5 +1,7 @@
 const StellarSdk = require("stellar-sdk");
 const StellarServer = new StellarSdk.Server(process.env.STELLAR_SERVER_URL);
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const distributionHistorySchema = new Schema(
   {
@@ -132,7 +134,7 @@ distributionHistorySchema.methods.payProfit = async function() {
   }
 };
 
-const DistributionHistory = new Model(
+const DistributionHistory = mongoose.model(
   "DistributionHistory",
   distributionHistorySchema
 );
